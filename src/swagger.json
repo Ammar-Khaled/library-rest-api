@@ -1,0 +1,284 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Library API",
+    "version": "1.0.0",
+    "description": "REST API for a library"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Author": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "bio": { "type": "string", "nullable": true }
+        }
+      },
+      "Book": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "year": { "type": "integer", "nullable": true },
+          "author_id": { "type": "integer" }
+        }
+      },
+      "Loan": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "book_id": { "type": "integer" },
+          "borrower_name": { "type": "string" },
+          "loaned_at": { "type": "string", "format": "date" },
+          "returned_at": { "type": "string", "format": "date", "nullable": true }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/authors": {
+      "get": {
+        "summary": "Get all authors",
+        "tags": ["Authors"],
+        "responses": {
+          "200": {
+            "description": "A list of authors",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Author" } }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create an author",
+        "tags": ["Authors"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "bio": { "type": "string" }
+                },
+                "required": ["name"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Created author" },
+          "400": { "description": "Invalid input" }
+        }
+      }
+    },
+    "/authors/{id}": {
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+      ],
+      "get": {
+        "summary": "Get author by ID",
+        "tags": ["Authors"],
+        "responses": {
+          "200": { "description": "Author found" },
+          "404": { "description": "Author not found" }
+        }
+      },
+      "patch": {
+        "summary": "Update an author",
+        "tags": ["Authors"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "bio": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Updated author" },
+          "404": { "description": "Author not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete an author",
+        "tags": ["Authors"],
+        "responses": {
+          "204": { "description": "Author deleted" },
+          "404": { "description": "Author not found" }
+        }
+      }
+    },
+    "/authors/{id}/books": {
+      "get": {
+        "summary": "Get all books by author",
+        "tags": ["Authors"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Books found" },
+          "404": { "description": "Author not found" }
+        }
+      }
+    },
+    "/books": {
+      "get": {
+        "summary": "Get all books",
+        "tags": ["Books"],
+        "parameters": [
+          { "name": "author_id", "in": "query", "schema": { "type": "integer" }, "description": "Filter by author ID" }
+        ],
+        "responses": {
+          "200": { "description": "List of books" }
+        }
+      },
+      "post": {
+        "summary": "Create a book",
+        "tags": ["Books"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "year": { "type": "integer" },
+                  "author_id": { "type": "integer" }
+                },
+                "required": ["title", "author_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Created book" },
+          "404": { "description": "Author not found" },
+          "400": { "description": "Invalid input" }
+        }
+      }
+    },
+    "/books/{id}": {
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+      ],
+      "get": {
+        "summary": "Get book by ID",
+        "tags": ["Books"],
+        "responses": {
+          "200": { "description": "Book found" },
+          "404": { "description": "Book not found" }
+        }
+      },
+      "patch": {
+        "summary": "Update a book",
+        "tags": ["Books"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "year": { "type": "integer" },
+                  "author_id": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Updated book" },
+          "404": { "description": "Book not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a book",
+        "tags": ["Books"],
+        "responses": {
+          "204": { "description": "Book deleted" },
+          "404": { "description": "Book not found" }
+        }
+      }
+    },
+    "/loans": {
+      "get": {
+        "summary": "Get all loans",
+        "tags": ["Loans"],
+        "parameters": [
+          { "name": "returned", "in": "query", "schema": { "type": "boolean" }, "description": "Filter by returned status" }
+        ],
+        "responses": {
+          "200": { "description": "List of loans" }
+        }
+      },
+      "post": {
+        "summary": "Checkout a book",
+        "tags": ["Loans"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "book_id": { "type": "integer" },
+                  "borrower_name": { "type": "string" }
+                },
+                "required": ["book_id", "borrower_name"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Loan created" },
+          "400": { "description": "Invalid input" },
+          "404": { "description": "Book not found" },
+          "409": { "description": "Book already on active loan" }
+        }
+      }
+    },
+    "/loans/{id}": {
+      "get": {
+        "summary": "Get loan by ID",
+        "tags": ["Loans"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Loan found" },
+          "404": { "description": "Loan not found" }
+        }
+      }
+    },
+    "/loans/{id}/return": {
+      "patch": {
+        "summary": "Return a loaned book",
+        "tags": ["Loans"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Book returned" },
+          "404": { "description": "Loan not found" },
+          "409": { "description": "Loan already returned" }
+        }
+      }
+    }
+  }
+}
