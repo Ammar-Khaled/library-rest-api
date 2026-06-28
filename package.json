@@ -5,12 +5,16 @@
   "main": "src/index.js",
   "scripts": {
     "seed": "node db/seed.js",
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "start:rest": "node src/index.js",
+    "start:graphql": "node src/graphql-server.js",
+    "dev:rest": "nodemon src/index.js",
+    "dev:graphql": "nodemon src/graphql-server.js"
   },
   "dependencies": {
+    "@apollo/server": "^4.13.0",
     "better-sqlite3": "^12.11.1",
     "express": "^5.2.1",
+    "graphql": "^16.14.2",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
